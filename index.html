@@ -629,6 +629,8 @@
         <div class="nav-item" data-view="reinforcement" data-sheet="Reinforcement"><span class="nav-icon">◗</span> Reinforcement</div>
         <div class="nav-item" data-view="bomHeaders" data-sheet="BOM_Headers"><span class="nav-icon">◗</span> BOM (Bag Specs)</div>
         <div class="nav-item" data-view="bomLines" data-sheet="BOM_Lines"><span class="nav-icon">◗</span> BOM (Materials)</div>
+        <div class="nav-item" data-view="machinery" data-sheet="Machinery"><span class="nav-icon">◗</span> Machinery</div>
+        <div class="nav-item" data-view="vendors" data-sheet="Vendors"><span class="nav-icon">◗</span> Vendors</div>
       </div>
  
       <div class="sidebar-section">
@@ -757,6 +759,8 @@
       <section id="view-reinforcement" class="view"><div id="page-Reinforcement"></div></section>
       <section id="view-bomHeaders" class="view"><div id="page-BOM_Headers"></div></section>
       <section id="view-bomLines" class="view"><div id="page-BOM_Lines"></div></section>
+      <section id="view-machinery" class="view"><div id="page-Machinery"></div></section>
+      <section id="view-vendors" class="view"><div id="page-Vendors"></div></section>
  
       <!-- USERS -->
       <section id="view-users" class="view">
@@ -823,6 +827,8 @@
         <label><input type="checkbox" value="Reinforcement" class="view-cb"> Reinforcement</label>
         <label><input type="checkbox" value="BOM_Headers" class="view-cb"> BOM Headers</label>
         <label><input type="checkbox" value="BOM_Lines" class="view-cb"> BOM Lines</label>
+        <label><input type="checkbox" value="Machinery" class="view-cb"> Machinery</label>
+        <label><input type="checkbox" value="Vendors" class="view-cb"> Vendors</label>
       </div>
     </div>
     <div class="form-actions">
@@ -879,9 +885,11 @@ const App = (() => {
       'Threads':            ['Sr_No', 'Category', 'Material_Type', 'Colour', 'Code_No', 'Vendor', 'Thread_Code', 'Size_20', 'Size_40', 'Size_60', 'Quality', 'Thread_Ref', 'Status', 'Remarks'],
       'Styles':             ['Sr_No', 'Collection', 'Collection_Name', 'Style_Name', 'Naming', 'Total_Colorways', 'Colorways', 'Status', 'Image_URL', 'Notes'],
       'Reinforcement':      ['Sr_No', 'Vendor', 'Material_Item', 'Used_In_Count', 'Bags_Using', 'Status', 'Notes'],
-      'BOM_Headers':        ['Style_ID', 'Style_Code', 'Bag_Name', 'Total_Materials', 'Leather_Count', 'Lining_Count', 'Reinforcement_Count', 'Status', 'Source_File'],
-      'BOM_Lines':          ['Style_ID', 'Style_Code', 'Bag_Name', 'Material_Type', 'Material_Description', 'Total_Sq_Mtr', 'Quantity', 'Source_File'],
-      'OTT_Inventory':      ['S_No', 'Material_Code', 'Pattern', 'Color', 'Quantity_Metres', 'Date_Received']
+      'BOM_Headers':        ['Style_No', 'Bag_Name', 'Leather_Count', 'Lining_Count', 'Reinforcement_Count', 'Thread_Count', 'Hardware_Count', 'Status', 'Source_File'],
+      'BOM_Lines':          ['Style_No', 'Bag_Name', 'Section', 'Material_Code', 'Item_Name', 'Length', 'Height', 'No_of_Parts', 'Total_Sq_Inch', 'Sq_Mtr', 'Quantity', 'Wastage', 'Total', 'Unit'],
+      'OTT_Inventory':      ['S_No', 'Material_Code', 'Pattern', 'Color', 'Quantity_Metres', 'Date_Received'],
+      'Machinery':          ['Sr_No', 'Brand', 'Machine_Name', 'Machine_Type', 'Serial_No', 'Contact_Details', 'Email', 'Address', 'Department', 'Purchase_Date', 'Vendor_Name', 'Invoice_No', 'Invoice_Amount', 'Warranty_Expiry', 'Supplier', 'Supplier_POC', 'AMC', 'AMC_Vendor', 'AMC_POC', 'Machine_ID', 'Maintenance_Type', 'Frequency', 'Last_Done', 'Next_Due', 'Technician_Details', 'Spare_Parts', 'Current_Stock', 'Minimum_Stock', 'To_Reorder', 'Spare_Supplier', 'Lead_Time', 'Price'],
+      'Vendors':            ['Sr_No', 'Vendor_Name', 'Vendor_Type', 'Contact_Person', 'Phone', 'Email', 'Address', 'GST_No', 'Status', 'Notes']
     },
     REQUIRED_FIELDS: {
       'Outer_Material':     ['Style_No', 'Style_Name', 'Item_Code'],
@@ -892,12 +900,14 @@ const App = (() => {
       'Threads':            ['Colour', 'Vendor'],
       'Styles':             ['Collection', 'Style_Name'],
       'Reinforcement':      ['Material_Item'],
-      'BOM_Headers':        ['Style_Code'],
-      'BOM_Lines':          ['Style_Code', 'Material_Description'],
-      'OTT_Inventory':      ['Material_Code', 'Color']
+      'BOM_Headers':        ['Style_No'],
+      'BOM_Lines':          ['Style_No', 'Item_Name'],
+      'OTT_Inventory':      ['Material_Code', 'Color'],
+      'Machinery':          ['Machine_Name'],
+      'Vendors':            ['Vendor_Name']
     },
-    DATE_FIELDS: ['Date_Added', 'Coats_Dev_Date', 'Serafil_Dev_Date', 'Date_Received'],
-    NUM_FIELDS: ['Quantity', 'GSM', 'Thickness_20', 'Thickness_40', 'Thickness_60', 'Balance_Material', 'S_No', 'Sr_No', 'Size_20', 'Size_40', 'Size_60', 'Total_Colorways', 'Used_In_Count', 'Total_Materials', 'Leather_Count', 'Lining_Count', 'Reinforcement_Count', 'Total_Sq_Mtr', 'Quantity_Metres'],
+    DATE_FIELDS: ['Date_Added', 'Coats_Dev_Date', 'Serafil_Dev_Date', 'Date_Received', 'Purchase_Date', 'Warranty_Expiry', 'Last_Done', 'Next_Due'],
+    NUM_FIELDS: ['Quantity', 'GSM', 'Thickness_20', 'Thickness_40', 'Thickness_60', 'Balance_Material', 'S_No', 'Sr_No', 'Size_20', 'Size_40', 'Size_60', 'Total_Colorways', 'Used_In_Count', 'Leather_Count', 'Lining_Count', 'Reinforcement_Count', 'Thread_Count', 'Hardware_Count', 'Quantity_Metres', 'Invoice_Amount', 'Current_Stock', 'Minimum_Stock', 'Price'],
     ENUM_FIELDS: {
       'Approval_Status': ['Approved', 'Not Approved', 'Pending'],
       'Coats_Status':    ['Approved', 'Not Approved', 'Given To Develop', 'Pending'],
@@ -910,13 +920,15 @@ const App = (() => {
       'outer': 'Outer_Material', 'lining': 'Lining_Material', 'inventory': 'Inventory',
       'colorDev': 'Color_Development', 'zippers': 'Zippers', 'threads': 'Threads',
       'styles': 'Styles', 'reinforcement': 'Reinforcement',
-      'bomHeaders': 'BOM_Headers', 'bomLines': 'BOM_Lines', 'ottInventory': 'OTT_Inventory'
+      'bomHeaders': 'BOM_Headers', 'bomLines': 'BOM_Lines', 'ottInventory': 'OTT_Inventory',
+      'machinery': 'Machinery', 'vendors': 'Vendors'
     },
     SHEET_TO_VIEW: {
       'Outer_Material': 'outer', 'Lining_Material': 'lining', 'Inventory': 'inventory',
       'Color_Development': 'colorDev', 'Zippers': 'zippers', 'Threads': 'threads',
       'Styles': 'styles', 'Reinforcement': 'reinforcement',
-      'BOM_Headers': 'bomHeaders', 'BOM_Lines': 'bomLines', 'OTT_Inventory': 'ottInventory'
+      'BOM_Headers': 'bomHeaders', 'BOM_Lines': 'bomLines', 'OTT_Inventory': 'ottInventory',
+      'Machinery': 'machinery', 'Vendors': 'vendors'
     }
   };
  
